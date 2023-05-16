@@ -2,6 +2,8 @@ import Home from "./routes/home/home.component";
 import Navigation from "./components/navigation/navigation.componenet";
 import { Routes, Route, Outlet } from "react-router-dom";
 import { Fragment } from "react";
+import SignIn from "./components/sign-in/sign-in.component";
+import Authentication from "./routes/authentication/authentication.component";
 
 const Shop = () => {
   return (
@@ -27,6 +29,7 @@ const App = () => {
         <Route path='/' element={<Navigation />} >
           <Route index element={<Home />} ></Route>
           <Route path = 'shop' element={<Shop />} ></Route>
+          <Route path = 'sign-in' element={<Authentication />} ></Route>
           {/* <Route path='/' index element={<Footer />} ></Route> */}
         </Route>
         
