@@ -1,22 +1,21 @@
 import { useState } from "react";
+import { useContext } from "react";
+
+
 import { signInwithGoogle, createUserFromAuth, auth } from "../../utils/firebase/firebase.util"
 import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
+import { UserContext } from "../../contexts/user.context";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
+
 
 
 import './sign-in.styles.scss';
 
 const SignIn = () => {
 
-    const handleSignInwithGoogle = async () => {
-        const user = await signInwithGoogle();
-        console.log(user);
-        const userRef = await createUserFromAuth(user);
-        console.log(userRef);
-
-    }
+    const { setCurrentUser } = useContext(UserContext);
 
     const dafaultFormFields = {
         email: '',
@@ -30,15 +29,19 @@ const SignIn = () => {
         setFormFields({...formFields, [name] : value})
     }
 
+    const handleSignInwithGoogle = async () => {
+        const user = await signInwithGoogle();
+        createUserFromAuth(user);
+        setCurrentUser(user);
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         const { email, password } = formFields;
         try {
             const {user} = await signInWithEmailAndPassword(auth, email, password);
-            console.log(user);
-            const userRef = createUserFromAuth(user);
-            console.log(userRef);
+            setCurrentUser(user);
         } catch (error) {
             switch(error.code){
                 case 'auth/wrong-password':
@@ -51,10 +54,9 @@ const SignIn = () => {
                     console.log('Error signing in the user - ', error.message);
             }   
         }
+        setFormFields(dafaultFormFields);
     }
 
-    const { email, password} = formFields;
-     
 
     return(
         <div className="sign-up-container">

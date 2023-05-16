@@ -1,15 +1,18 @@
-import { useState } from 'react';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { useState, useContext } from 'react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
 import { auth, createUserFromAuth } from '../../utils/firebase/firebase.util';
+import { UserContext } from '../../contexts/user.context';
 
 import './sign-up.styles.scss';
 
 
 
 const SignUp = () => {
+
+    const { setCurrentUser } = useContext(UserContext);
 
     const dafaultFormFields = {
         displayName: '',
@@ -30,24 +33,18 @@ const SignUp = () => {
         if(formFields.confirmPassword !== formFields.password){
             alert('Passwords do not match');
             return;
-        } 
-        //check if user already exsits.
-        //If yes, display an alert 
-        const {user} = await createUserWithEmailAndPassword(auth, formFields.email, formFields.password);
-        console.log(user);
-        const { displayName } = formFields;
-        const userRef = createUserFromAuth(user, { displayName });
+        }
+        try {
+            const {user} = await createUserWithEmailAndPassword(auth, formFields.email, formFields.password);
+            console.log(user);
+            setCurrentUser(user)
+            const { displayName } = formFields;
+            createUserFromAuth(user, { displayName });
+            setFormFields(dafaultFormFields);
 
-        console.log('User is -', userRef)
-
-        
-
-
-
-        //If no, add the user to database
-
-        setFormFields(dafaultFormFields);
-        console.log(formFields);
+        } catch(error){
+            console.log(error);
+        }
     }
 
     return (
@@ -59,7 +56,7 @@ const SignUp = () => {
                 <FormInput label='Email' type='email' required onChange={handleChange} name='email' value={formFields.email}  />
                 <FormInput label='Password' type='password' required onChange={handleChange} name='password' value={formFields.password}  />
                 <FormInput label='Confirm Password' type='password' required onChange={handleChange} name='confirmPassword' value={formFields.confirmPassword}  />
-                <Button type='submit'>Sign Up</Button>`1`
+                <Button type='submit'>Sign Up</Button>
             </form>
         </div>
     )
