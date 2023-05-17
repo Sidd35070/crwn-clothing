@@ -42,8 +42,14 @@ const SignUp = () => {
             createUserFromAuth(user, { displayName });
             setFormFields(dafaultFormFields);
 
-        } catch(error){
-            console.log(error);
+        } catch (error) {
+            switch(error.code){
+                case 'auth/email-already-in-use':
+                    alert('Email already in use');
+                    break;
+                default:
+                    console.log('Error signing up the user - ', error.message);
+            }   
         }
     }
 
