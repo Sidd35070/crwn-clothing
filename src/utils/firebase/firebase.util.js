@@ -47,8 +47,6 @@ export const createUserFromAuth = async (user, additionalData = {}) => {
         } catch(error) {
             console.log('An error occured while creating the user - ', error.message)
         }
-    } else {
-        console.log('User exists with UID', userRef.uid);
     }
 
     return userRef;
